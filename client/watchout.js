@@ -20,7 +20,6 @@ var gameBoard = d3.select('.board').append('svg:svg')
                 .attr('width', gameOptions.width)
                 .attr('height', gameOptions.height);
 
-var enemies = [];
 
 var updateScore = function() {
   d3.select('.current-score')
@@ -120,27 +119,25 @@ Player.prototype.moveRelative = function (dx, dy) {
 }
 
 
-// var x = new Player();
-// x.render(gameBoard);
+
 
 var players = [];
-//var x = new Player(gameOptions).render(gameBoard);
 players.push(new Player(gameOptions));
 players[0].render(gameBoard);
 
 var createEnemies = function (){
-  enemies = _.range(0, gameOptions.nEnemies);
-  enemies = _.map(enemies, function(i) {
+  var arr = _.range(0, gameOptions.nEnemies);
+  return _.map(arr, function(i) {
     return ( {
       id : i,
       x: Math.random()*100,
       y: Math.random()*100
     });
-  })  
+  });
 };
 
 var renderEnemies = function(enemy_data) {
-  enemies = gameBoard.selectAll('circle.enemy').data(enemy_data, function(d) {
+  var enemies = gameBoard.selectAll('circle.enemy').data(enemy_data, function(d) {
     return d.id;
   });
 
@@ -153,6 +150,9 @@ var renderEnemies = function(enemy_data) {
   .attr('r', 1);
 
   enemies.exit().remove();
+  enemies
+    .transition().duration(500).attr('r',10)
+    .transition().duration(2000).tween('custom',tweenWithCollisionDetection);
 
 }
 
@@ -187,7 +187,7 @@ var tweenWithCollisionDetection = function(endData) {
   
   return ( function (t) {
     checkCollision(enemy, onCollision);
-
+    console.log('ran');
     var enemyNextPos = {
       x: startPos.x + (endPos.x - startPos.x) * t,
       y: startPos.y + (endPos.y - startPos.y) * t
@@ -205,8 +205,7 @@ var tweenWithCollisionDetection = function(endData) {
 
 var play = function() {
   var gameTurn = function() {
-    var newEnemyPositions = createEnemies();
-    renderEnemies(newEnemyPositions);
+    renderEnemies(createEnemies());
   }
   var increaseScore = function() {
     gameStats.score++;
@@ -216,13 +215,14 @@ var play = function() {
   setInterval(gameTurn, 2000);
 
   setInterval(increaseScore, 50);
+  gameBoard.selectAll('circle.enemy')
+    .transition().duration(500).attr('r',10)
+    .transition().duration(2000).tween('custom',tweenWithCollisionDetection);
 }
 
-play();
 
 
-enemies.transition().duration(500).attr('r',10)
-  .transition().duration(2000).tween('custom',tweenWithCollisionDetection);
+
 
 
 
