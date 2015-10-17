@@ -238,14 +238,13 @@ var play = function() {
   setInterval(increaseScore, 50);
 
   gameBoard.selectAll('image')
-    .transition().duration(500).attr('r',10)
     .transition().duration(2000).tween('custom',tweenWithCollisionDetection);
     // .attrTween('transform',tween);
 
   // gameBoard.selectAll('image')
   //   .transition().duration(2000)
   //   .attrTween('transform', function (d,i,a) {
-  //     return d3.interpolateString("rotate(0,100,100)","rotate(720,100,100)");
+  //     return d3.interpolateString("rotate(0)","rotate(720)");
   //   });
 }
 
