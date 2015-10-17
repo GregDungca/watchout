@@ -14,3 +14,8 @@ path {
 circle {
   color : black;
 }
+
+image {
+  height : 50px;
+  width : 50px;
+}
