@@ -54,14 +54,15 @@ Player.prototype.render = function(to) {
 }
 
 Player.prototype.setUpDragging = function(){
-  var dragMove = function () {
-    console.log(d3.event.dx+','+d3.event.dy);
-    this.moveRelative(d3.event.dx, d3.event.dy);
-  }
   var player = this;
+  var dragMove = function () {
+    //console.log(d3.event.dx+','+d3.event.dy);//
+    return player.moveRelative(d3.event.dx, d3.event.dy);
+  }
   var drag = d3.behavior.drag()
-      .on('drag', console.log('test'));
-  this.el.call(drag);
+      .on('drag', dragMove);
+
+  return this.el.call(drag);
 }
 
 Player.prototype.getX = function() {
@@ -141,9 +142,9 @@ var createEnemies = function (){
 var renderEnemies = function(enemy_data) {
   enemies = gameBoard.selectAll('circle.enemy').data(enemy_data, function(d) {
     return d.id;
-});
+  });
 
-enemies.enter().append('svg:circle')
+  enemies.enter().append('svg:circle')
   .attr('class', 'enemy')
   .attr('cx', function(enemy) {
     return axes.x(enemy.x)})
@@ -151,7 +152,7 @@ enemies.enter().append('svg:circle')
     return axes.y(enemy.y)})
   .attr('r', 1);
 
-enemies.exit().remove();
+  enemies.exit().remove();
 
 }
 
@@ -166,6 +167,62 @@ var checkCollision = function(enemy, collidedCallback) {
     }
   });
 };
+
+var onCollision = function() {
+  updateBestScore();
+  gameStats.score = 0;
+  updateScore();
+}
+
+var tweenWithCollisionDetection = function(endData) {
+  var enemy = d3.select(this);
+  var startPos = {
+    x: parseFloat(enemy.attr('cx')),
+    y: parseFloat(enemy.attr('cy'))
+  }
+  var endPos = {
+    x: axes.x(endData.x),
+    y: axes.y(endData.y)
+  }
+
+  return ( function (t) {
+    checkCollision(enemy, onCollision);
+
+    var enemyNextPos = {
+      x: startPos.x + (endPos.x - startPos.x) * t,
+      y: startPos.y + (endPos.y - startPos.y) * t
+    };
+
+    enemy.attr('cx', enemyNextPos.x)
+      .attr('cy', enemyNextPos.y);
+  });
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
