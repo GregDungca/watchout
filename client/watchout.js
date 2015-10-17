@@ -54,15 +54,13 @@ Player.prototype.render = function(to) {
 }
 
 Player.prototype.setUpDragging = function(){
-  var player = this;
   var dragMove = function () {
-    //console.log(d3.event.dx+','+d3.event.dy);//
-    return player.moveRelative(d3.event.dx, d3.event.dy);
+    this.moveRelative(d3.event.dx, d3.event.dy);
   }
+  var player = this;
   var drag = d3.behavior.drag()
-      .on('drag', console.log('test'));
+      .on('drag', dragMove.bind(player));
   this.el.call(drag);
-
 }
 
 Player.prototype.getX = function() {
@@ -125,8 +123,10 @@ Player.prototype.moveRelative = function (dx, dy) {
 // var x = new Player();
 // x.render(gameBoard);
 
-players = [];
-players.push(new Player(gameOptions).render(gameBoard));
+var players = [];
+//var x = new Player(gameOptions).render(gameBoard);
+players.push(new Player(gameOptions));
+players[0].render(gameBoard);
 
 var createEnemies = function (){
   enemies = _.range(0, gameOptions.nEnemies);
@@ -184,7 +184,7 @@ var tweenWithCollisionDetection = function(endData) {
     x: axes.x(endData.x),
     y: axes.y(endData.y)
   }
-
+  
   return ( function (t) {
     checkCollision(enemy, onCollision);
 
@@ -200,10 +200,29 @@ var tweenWithCollisionDetection = function(endData) {
 
 }
 
+// createEnemies();
+// renderEnemies(enemies);
+
+var play = function() {
+  var gameTurn = function() {
+    var newEnemyPositions = createEnemies();
+    renderEnemies(newEnemyPositions);
+  }
+  var increaseScore = function() {
+    gameStats.score++;
+    updateScore();
+  }
+  gameTurn();
+  setInterval(gameTurn, 2000);
+
+  setInterval(increaseScore, 50);
+}
+
+play();
 
 
-
-
+enemies.transition().duration(500).attr('r',10)
+  .transition().duration(2000).tween('custom',tweenWithCollisionDetection);
 
 
 
