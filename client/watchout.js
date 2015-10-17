@@ -60,9 +60,14 @@ Player.prototype.setUpDragging = function(){
     return player.moveRelative(d3.event.dx, d3.event.dy);
   }
   var drag = d3.behavior.drag()
+<<<<<<< HEAD
       .on('drag', dragMove);
 
   return this.el.call(drag);
+=======
+      .on('drag', dragMove.bind(player));
+  this.el.call(drag);
+>>>>>>> c01dbd14ffc473936ce35b977621a46783709488
 }
 
 Player.prototype.getX = function() {
