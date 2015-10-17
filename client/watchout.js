@@ -8,7 +8,8 @@ var gameOptions = {
 
 var gameStats = {
   score: 0,
-  bestScore: 0
+  bestScore: 0,
+  collisionCount: 0
 };
 
 var axes = {
@@ -172,6 +173,13 @@ var onCollision = function() {
   updateBestScore();
   gameStats.score = 0;
   updateScore();
+  updateCollisionCount();
+}
+
+var updateCollisionCount = function() {
+  gameStats.collisionCount ++;
+  d3.select('.collision-count').text(gameStats.collisionCount.toString());
+
 }
 
 var tweenWithCollisionDetection = function(endData) {
